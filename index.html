@@ -7,73 +7,65 @@
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<title>Painting App</title>
 <style>
-	canvas{
-		height:80vh;
-		widht:100vw;
+
+	canvas {
+		height: 85vh;
+		width: 100vw;
 	}
+	
 	body {
 		margin:0;
 		overflow:hidden;
 		background-color: rgb(172,172,172);
 	}
 
-	.container-fluid {
+	.toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-evenly;
+	}
+
+	.toolbar > div {
+		margin: 10px;
+	}
+
+	.toolbar button {
 		background-color: rgb(172,172,172);
-		width: 100%
-		height: 95px;
+		border: 1px solid black;
+		color: black;
+	}
+
+	.selectShape {
+		text-align: center;
+		padding: 10px;
 	}
 	
 	input[type= "color"] {
-		width: 40%;
-		margin: 5px auto;
-		display: block;
-	}
-	
-	input [type= "range"] {
-		width: 10%;
-	}
-	
-	span {
-		
-		bottom: 5px;
-		color: #ffffff;
-		font-family: georgia;
-	}
-
-	#selectShape, #toolbar {
-		padding: 8px;
-	}
-
-	#selectShape {
-		margin-left: 45%;
+		width: 150px;
 	}
 
 </style>
 </head>
 <body>
-	<div class="container-fluid" id="toolbar">
-		<div class="row">
-			<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-			<input type="color" value="#ff8080">
-		    </div>
-		    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-			<input type="range" min="5" max="50" value="10"><span class="display">10</span>
-		    </div>
-		    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-			<button type="button" class="btn btn-primary btn-md">Clear Canvas</button>
-		    </div>
+
+	<div class="menu_bar">
+
+		<div class="toolbar">
+			<div><input type="color" value="#ff8080"></div>
+			<div><input type="range" min="5" max="50" value="10"><span class="display">10</span></div>
+			<div><button type="button" class="btn btn-sm">CLEAR CANVAS</button></div>
 		</div>
+
+		<div class="selectShape">
+			<button class="btn btn-warning btn-md" onclick="drawRect()" id="rectStroke">Rect Stroke</button>
+		</div>
+
 	</div>
 
-	<div class="container-fluid" id="selectShape">
-		<div class="row">
-			
-				<button class="btn btn-warning btn-md" onclick="drawRect()" id="rectStroke">Rect Stroke</button>
-			
-		</div>
+	<div class="painting_area">
+		<canvas class="myCanvas"></canvas>
 	</div>
-	<canvas class= "myCanvas">
-	</canvas>
+
 	<script>
 		const canvas= document.querySelector('.myCanvas');
 		const width= canvas.width= window.innerWidth;
