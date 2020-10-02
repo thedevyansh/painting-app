@@ -8,81 +8,89 @@
 	<title>Painting App</title>
 <style>
 
-	canvas {
-		height: 85vh;
-		width: 100vw;
-	}
-	
 	body {
 		margin:0;
 		overflow:hidden;
 		background-color: rgb(172,172,172);
 	}
 
-	.toolbar {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-evenly;
-	}
-
-	.toolbar > div {
-		margin: 10px;
-	}
-
-	.toolbar button {
+	.container-fluid {
 		background-color: rgb(172,172,172);
-		border: 1px solid black;
-		color: black;
-	}
-
-	.selectShape {
-		text-align: center;
-		padding: 10px;
+		width: 100%
+		height: 95px;
 	}
 	
 	input[type= "color"] {
-		width: 150px;
+		width: 40%;
+		margin: 5px auto;
+		display: block;
+	}
+	
+	input [type= "range"] {
+		width: 10%;
+	}
+	
+	span {
+		
+		bottom: 5px;
+		color: #ffffff;
+		font-family: georgia;
+	}
+
+	#selectShape, #toolbar {
+		padding: 8px;
+	}
+
+	#selectShape {
+		margin-left: 45%;
 	}
 
 </style>
 </head>
 <body>
-
-	<div class="menu_bar">
-
-		<div class="toolbar">
-			<div><input type="color" value="#ff8080"></div>
-			<div><input type="range" min="5" max="50" value="10"><span class="display">10</span></div>
-			<div><button type="button" class="btn btn-sm">CLEAR CANVAS</button></div>
+	<div class="container-fluid" id="toolbar">
+		<div class="row">
+			<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<input type="color" value="#f30000">
+		    </div>
+		    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<input type="range" min="5" max="50" value="10"><span class="display">10</span>
+		    </div>
+		    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<button type="button" class="btn btn-primary btn-md">Clear Canvas</button>
+		    </div>
 		</div>
-
-		<div class="selectShape">
-			<button class="btn btn-warning btn-md" onclick="drawRect()" id="rectStroke">Rect Stroke</button>
-		</div>
-
 	</div>
 
-	<div class="painting_area">
-		<canvas class="myCanvas"></canvas>
+	<div class="container-fluid" id="selectShape">
+		<div class="row">
+			
+                <button class="btn btn-warning btn-md" onclick="drawRect()" id="rectStroke">Rect Stroke</button>
+                <button class="btn btn-warning btn-md" onclick="drawCircle()" id="rectStroke">Circular Stroke</button>
+				<button class="btn btn-warning btn-md" onclick="drawRing()" id="rectStroke">Ring Stroke</button>
+				<button class="btn btn-warning btn-md" onclick="inspire((status++)%4)" id="rectStroke">Inspiration</button>
+		</div>
 	</div>
-
+	<canvas class= "myCanvas">
+	</canvas>
 	<script>
 		const canvas= document.querySelector('.myCanvas');
 		const width= canvas.width= window.innerWidth;
 		const height= canvas.height= window.innerHeight-105;
 		const ctx= canvas.getContext('2d');
-		ctx.fillStyle= 'rgb(0,0,0)';
+		ctx.fillStyle= 'rgb(0)';
 		ctx.fillRect(0,0,width,height);
 		const colorPick= document.querySelector('input[type= "color"]');
 		const sizePick= document.querySelector('input[type="range"]');
 		const clearbutton= document.querySelector('button');
 		const update= document.querySelector('.display');
-
+		let status=0;
 // declaring X and Y to keep track of the cursor position
 // declaring press to paint when the mouse button is pressed
 		let X;
 		let Y;
 		let press= false;
+	
 
 		function degTorad(degree) {
 			return degree * Math.PI / 180;
@@ -100,9 +108,13 @@
 			update.textContent= sizePick.value;
 		}
 
-		clearbutton.onclick= function() {
-			ctx.fillStyle= 'rgb(0,0,0)';
+		
+		clearbutton.onclick=cleared;
+		
+		function cleared() {
+			ctx.fillStyle= '#121212';
 			ctx.fillRect(0,0,width,height);
+            cancelPendingAnim();
 		}
 //  pageX and clientX are used to determine the position of cursor in pixels
 //  scrollLeft and scrollTop are used to find number of pixels by which the elements have been scrolled horizontally and vertically resp	
@@ -113,16 +125,114 @@
 			Y= (window.Event) ? event.pageY : event.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : 
 				                                                              document.body.scrollTop);
 		}
+		
+		let circle=0,rect=0,ring=0,inspired=0;
 
-
-		function drawRect() {
+		function cancelPendingAnim(){
+			cancelAnimationFrame(rect);
+			cancelAnimationFrame(circle);
+			cancelAnimationFrame(ring);
+			cancelAnimationFrame(inspired);
+		}
+        //to draw a rectangle
+        function drawRect() {
+			
+			cancelPendingAnim();
 			if (press) {
 				ctx.fillStyle= colorPick.value;
 				ctx.fillRect(X,Y-105,sizePick.value,sizePick.value);
+               
 			}
-			window.requestAnimationFrame(drawRect);
+			rect=window.requestAnimationFrame(drawRect);
+		}
+
+        //to draw a circle
+		function drawCircle() {
+			
+			cancelPendingAnim();
+			if (press) {
+                ctx.beginPath();
+                ctx.arc(X,Y-105,sizePick.value,0,2*Math.PI);
+                ctx.fillStyle=colorPick.value;
+                ctx.fill();
+                
+			}
+			circle=window.requestAnimationFrame(drawCircle);
+		}
+
+		//rings
+		function drawRing() {
+			
+			cancelPendingAnim();
+			
+			if (press) {
+                ctx.beginPath();
+                ctx.arc(X,Y-105,sizePick.value,0,2*Math.PI);
+                ctx.strokeStyle=colorPick.value;
+                ctx.stroke();
+                
+			}
+			ring=window.requestAnimationFrame(drawRing);
 		}
 		
+
+		function inspire(part){
+			let w= Math.random()*width, h=Math.random()*(height);
+			let size=5+Math.ceil(Math.random()*12);
+			cancelPendingAnim();
+			let gradient= [makeGradient("#fcb045","#fd1d1d","#833ab4"),makeGradient("#24FE41","#93EDC7","#FDFC47")];
+			let index=Math.floor(Math.random()*2);
+			
+			//rings
+			if(part==0){
+			    ctx.beginPath();
+                ctx.arc(w,h,size,0,2*Math.PI);
+				ctx.strokeStyle=gradient[index];
+                ctx.stroke();
+				inspired=window.requestAnimationFrame(()=>{inspire(0)});
+			}
+
+			//rectangles
+			else if(part==1){
+				ctx.fillRect(w,h,size,size);			
+				ctx.fillStyle=gradient[index];
+                ctx.fill();
+				inspired=window.requestAnimationFrame(()=>{inspire(1)});
+			}
+			//circles
+			else if(part==2){
+				ctx.beginPath();
+                ctx.arc(w,h,size,0,2*Math.PI);
+				ctx.fillStyle=gradient[index];
+                ctx.fill();
+				inspired=window.requestAnimationFrame(()=>{inspire(2)});
+			}
+ 				//bezier path
+			else if(part==3){
+				h+=60;
+				ctx.beginPath();
+                ctx.moveTo(0,height/3+h/9);
+				ctx.bezierCurveTo(width/4,h+100,width/2,h,width,h/10); 
+				ctx.strokeStyle=gradient[0];
+			    ctx.stroke(); 
+				inspired=window.requestAnimationFrame(()=>{inspire(3)});  
+				}
+
+			
+
+		}
+
+		function makeGradient(m,l,h){
+
+			let gradient = ctx.createLinearGradient(0, 0, width, 0);
+				gradient.addColorStop("0", m);
+				gradient.addColorStop("0.4", l);
+				gradient.addColorStop("1", h);
+
+			return gradient;
+		}
+		
+
 	</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
