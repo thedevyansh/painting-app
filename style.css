@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: rgb(172, 172, 172);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.toolbar > div {
+  margin: 10px;
+}
+
+.toolbar button {
+  background-color: rgb(172, 172, 172);
+  border: 1px solid black;
+  color: black;
+}
+
+.selectShape {
+  padding: 10px;
+}
+
+input[type="color"] {
+  width: 150px;
+}
+
+canvas {
+  height: 85vh;
+  width: 100vw;
+}
+.selectShape button {
+    margin: 0.5px;
+}
+@media screen and (min-width: 450px) {
+    .selectShape {
+        text-align: center;
+    }
+}
